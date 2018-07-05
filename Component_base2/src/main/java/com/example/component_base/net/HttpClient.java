@@ -41,9 +41,9 @@ public class HttpClient {
         if (instance == null) {
             synchronized (HttpClient.class) {
                 if (instance == null) {
+                    app = application;
                     instance = new HttpClient();
                     initOkClient();
-                    app = application;
                 }
             }
         }
@@ -75,10 +75,10 @@ public class HttpClient {
      *
      * @param baseUrl
      */
-    public void retrofitBuild(String baseUrl) {
+    public Retrofit retrofit(String baseUrl) {
         if (TextUtils.isEmpty(baseUrl))
             throw new BaseUrlException("传入的base url为空或空串");
-        createRetrofit(baseUrl);
+        return createRetrofit(baseUrl);
     }
 
     /**
@@ -87,20 +87,21 @@ public class HttpClient {
      * @param baseUrl
      * @param headerParams
      */
-    public void retrofitBuildWithHeader(String baseUrl, Map<String, String> headerParams) {
+    public Retrofit retrofitWithHeader(String baseUrl, Map<String, String> headerParams) {
         if (TextUtils.isEmpty(baseUrl))
             throw new BaseUrlException("传入的base url为空或空串");
         addHeader(headerParams);
-        createRetrofit(baseUrl);
+        return createRetrofit(baseUrl);
     }
 
-    private void createRetrofit(String baseUrl) {
+    private Retrofit createRetrofit(String baseUrl) {
         retrofit = new Retrofit.Builder()
                 .client(okClient)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(baseUrl)
                 .build();
+        return retrofit;
     }
 
     /**
